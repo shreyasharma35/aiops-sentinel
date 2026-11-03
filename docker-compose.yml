@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  sentinel-app:
+    build: .
+    container_name: aiops_sentinel_platform
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=True
+      - FAKESTORE_API_URL=https://fakestoreapi.com
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3.2
+    volumes:
+      - sentinel_data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/ecommerce/products/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  sentinel_data:

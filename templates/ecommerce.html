@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SentinelMart — Live E-Commerce Platform Monitored by AIOps Sentinel</title>
+  <meta name="description" content="Production-style e-commerce store integrated with AIOps Sentinel for real-time observability, explainable root cause analysis, and automated SRE recovery.">
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/static/css/ecommerce.css">
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="navbar">
+    <a href="/store" class="brand">
+      <div class="brand-logo">S</div>
+      <div class="brand-text">
+        <h1>SentinelMart</h1>
+        <p>Live Storefront Demo</p>
+      </div>
+    </a>
+
+    <div class="nav-center">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search catalog items, electronics, clothing, jewelry..." autocomplete="off">
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Direct Link to Integrated SRE Control Plane -->
+      <a href="/sentinel" class="btn-sentinel-portal" title="Open AIOps Sentinel Control Center">
+        <span>🛡️</span>
+        <span>AIOps Sentinel SRE</span>
+      </a>
+
+      <!-- Shopping Cart Trigger Button -->
+      <button class="cart-btn" id="cartBtn" aria-label="Shopping Cart">
+        <span>🛒</span>
+        <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Live Observability Status Banner -->
+  <aside class="announcement-banner">
+    <div class="banner-left">
+      <div class="pulse-dot"></div>
+      <span><strong>AIOps Sentinel Telemetry Active:</strong> All shopping actions generate real-time metrics, response times, and structured logs.</span>
+    </div>
+    <div class="banner-right">
+      <a href="/sentinel#failure-lab">Open Chaos & Failure Lab →</a>
+    </div>
+  </aside>
+
+  <!-- Category Department Filter Bar -->
+  <nav class="categories-bar" id="categoriesBar" aria-label="Product Categories">
+    <button class="cat-chip active">All Departments</button>
+  </nav>
+
+  <!-- Main Storefront Body -->
+  <main class="main-content">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Featured Catalog</h2>
+        <p class="section-count" id="productCount">Streaming catalog items...</p>
+      </div>
+    </div>
+
+    <!-- Product Cards Grid -->
+    <section class="product-grid" id="productGrid" aria-label="Products Catalog">
+      <!-- Dynamic cards rendered by ecommerce.js -->
+    </section>
+  </main>
+
+  <!-- Shopping Cart Slide-over Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping Cart Drawer">
+    <div class="drawer-header">
+      <h2>Your Shopping Cart</h2>
+      <button class="drawer-close" id="drawerCloseBtn">&times;</button>
+    </div>
+
+    <div class="drawer-items" id="drawerItems">
+      <!-- Dynamic Cart line items -->
+    </div>
+
+    <div class="drawer-footer">
+      <div class="subtotal-row">
+        <span>Subtotal</span>
+        <span id="drawerSubtotal">$0.00</span>
+      </div>
+      <div class="total-row">
+        <span>Estimated Total</span>
+        <span id="drawerTotal">$0.00</span>
+      </div>
+      <button class="btn-checkout" id="btnProceedCheckout">
+        <span>Proceed to Checkout</span>
+        <span>→</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Checkout & Simulated Payment Modal -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="font-weight: 800; font-size: 1.15rem;">Checkout & Order Payment</h3>
+        <button class="drawer-close" id="modalCloseBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="alert-simulation-notice">
+          ℹ️ <strong>Simulated Payment Gateway:</strong> Payments are processed via simulated transaction endpoints integrated with Sentinel failure detection.
+        </div>
+
+        <div id="checkoutErrorNotice" style="display: none; background: #fee2e2; border: 1px solid #f87171; border-radius: 8px; padding: 0.85rem; margin-bottom: 1rem; color: #991b1b; font-size: 0.85rem;"></div>
+
+        <form id="checkoutForm">
+          <div class="form-group">
+            <label for="custName">Customer Full Name</label>
+            <input type="text" id="custName" value="Sarah Jenkins" required>
+          </div>
+
+          <div class="form-group">
+            <label for="custEmail">Receipt Email Address</label>
+            <input type="email" id="custEmail" value="shopper@sentinel.local" required>
+          </div>
+
+          <div class="form-group">
+            <label for="cardNumber">Credit / Debit Card Number</label>
+            <input type="text" id="cardNumber" value="4242 •••• •••• 4242" placeholder="4242 4242 4242 4242" required maxlength="19">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cardExp">Expiry Date</label>
+              <input type="text" id="cardExp" value="12/28" placeholder="MM/YY" required maxlength="5">
+            </div>
+            <div class="form-group">
+              <label for="cardCvv">Security CVV</label>
+              <input type="text" id="cardCvv" value="888" placeholder="CVC" required maxlength="4">
+            </div>
+          </div>
+
+          <div style="background: #f1f5f9; padding: 0.85rem; border-radius: 8px; margin: 1rem 0; display: flex; justify-content: space-between; font-weight: 700;">
+            <span id="checkoutItemsCount">0 items</span>
+            <span id="checkoutTotal">$0.00</span>
+          </div>
+
+          <button type="submit" class="btn-checkout" id="btnSubmitPayment" style="margin-top: 0.5rem;">
+            <span id="paySpinner" style="display: none; animation: spin 1s infinite linear;">⚙️</span>
+            <span id="payBtnText">Authorize & Place Order</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Confirmation Modal -->
+  <div class="modal-overlay" id="confirmationModal">
+    <div class="modal-card" style="text-align: center; padding: 2rem;">
+      <div style="font-size: 3.5rem; margin-bottom: 1rem;">🎉</div>
+      <h2 style="font-size: 1.5rem; font-weight: 800; color: #16a34a; margin-bottom: 0.5rem;">Order Confirmed!</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Thank you! Your simulated transaction completed and was audited by Sentinel.</p>
+      
+      <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; text-align: left; margin-bottom: 1.5rem; font-size: 0.88rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span style="color: var(--text-muted);">Order Number:</span>
+          <strong id="confOrderNumber">ORD-XXXX</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span style="color: var(--text-muted);">Payment ID:</span>
+          <strong id="confPaymentId">PAY-XXXX</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted);">Total Amount:</span>
+          <strong id="confTotal" style="color: #4f46e5; font-size: 1.1rem;">$0.00</strong>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem;">
+        <button onclick="closeConfirmationModal()" class="btn-checkout" style="background: #f1f5f9; color: var(--text-main); border: 1px solid var(--border);">Continue Shopping</button>
+        <a href="/sentinel" class="btn-checkout" style="text-decoration: none;">View Sentinel Observability →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Detail Modal -->
+  <div class="modal-overlay" id="productDetailModal">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <span id="modalProdCategory" style="font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase;">CATEGORY</span>
+        <button class="drawer-close" onclick="closeProductDetailModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="display: grid; grid-template-columns: 200px 1fr; gap: 1.5rem; align-items: start;">
+        <img id="modalProdImage" src="" alt="Product" style="width: 100%; max-height: 220px; object-fit: contain; background: #fff; padding: 1rem; border: 1px solid var(--border); border-radius: 8px;">
+        <div>
+          <h3 id="modalProdTitle" style="font-size: 1.1rem; font-weight: 800; line-height: 1.35; margin-bottom: 0.5rem;"></h3>
+          <div id="modalProdRating" style="font-size: 0.85rem; color: #eab308; margin-bottom: 0.75rem;"></div>
+          <div id="modalProdPrice" style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem;"></div>
+          <p id="modalProdDesc" style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1.5rem;"></p>
+          <button id="modalAddToCartBtn" class="btn-checkout"><span>+</span> Add to Shopping Basket</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Floating Chaos Quick Status Pill -->
+  <div class="chaos-quick-bar" id="chaosQuickBar" style="display: none;"></div>
+
+  <script src="/static/js/ecommerce.js"></script>
+</body>
+</html>

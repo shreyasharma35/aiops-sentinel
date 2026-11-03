@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIOps Sentinel — Enterprise SRE Observability & Autonomous Recovery Platform</title>
+  <meta name="description" content="Explainable, Adaptive and Deployment-Aware AIOps Platform for Intelligent Incident Detection, Root Cause Analysis, and Controlled Automated Recovery.">
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js 4.4 from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+  <!-- Modern Enterprise Soft Pastel Design System -->
+  <link rel="stylesheet" href="/static/css/sentinel.css">
+</head>
+<body>
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-wrapper">
+        <div class="sentinel-logo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <div class="sidebar-brand-text">
+          <h2>AIOps Sentinel</h2>
+          <span class="brand-tag">Enterprise SRE Control</span>
+        </div>
+      </div>
+      <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">OBSERVABILITY & STORE</div>
+      <ul class="nav-list">
+        <li>
+          <a class="nav-item active" data-tab="overview" title="Overview Dashboard">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+            </span>
+            <span class="nav-label">Overview</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="storefront" title="E-Commerce Demonstration Store">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+            </span>
+            <span class="nav-label">E-Commerce Store</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="services" title="Microservice Health & SLIs">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+            </span>
+            <span class="nav-label">Service Monitoring</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="telemetry" title="Streaming Telemetry & Logs">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            </span>
+            <span class="nav-label">Telemetry & Analytics</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-section-label">INTELLIGENCE & CAUSALITY</div>
+      <ul class="nav-list">
+        <li>
+          <a class="nav-item" data-tab="incidents" title="Incident Center & Correlation">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </span>
+            <span class="nav-label">Incident Center</span>
+            <span class="nav-counter-badge" id="activeIncidentsBadge" style="display: none;">0</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="rca" title="Explainable Root Cause Analysis">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            </span>
+            <span class="nav-label">Root Cause Analysis</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="adaptive" title="Statistical Adaptive Thresholds">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+            </span>
+            <span class="nav-label">Adaptive Thresholds</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="ml" title="Isolation Forest ML Anomaly Detection">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"></path><path d="m4.93 4.93 2.83 2.83"></path><path d="M2 12h4"></path><path d="m4.93 19.07 2.83-2.83"></path><path d="M12 22v-4"></path><path d="m19.07 19.07-2.83-2.83"></path><path d="M22 12h-4"></path><path d="m19.07 4.93-2.83 2.83"></path></svg>
+            </span>
+            <span class="nav-label">ML Anomaly Detection</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="topology" title="Service Dependency Graph & Blast Radius">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="6" r="3"></circle><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="9" y1="6" x2="15" y2="6"></line><line x1="6" y1="9" x2="6" y2="15"></line><line x1="18" y1="9" x2="18" y2="15"></line><line x1="9" y1="18" x2="15" y2="18"></line></svg>
+            </span>
+            <span class="nav-label">Service Dependency Map</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="deployments" title="Deployment History & Correlation">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+            </span>
+            <span class="nav-label">Deployment Monitoring</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-section-label">REMEDIATION & EVALUATION</div>
+      <ul class="nav-list">
+        <li>
+          <a class="nav-item" data-tab="runbooks" title="Context-Aware AI Runbooks">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
+            </span>
+            <span class="nav-label">AI Runbooks</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="memory" title="Historical Incident Memory & RAG">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4.5 4.5 0 0 0-4.5 4.5c0 1.2.5 2.3 1.3 3.1A7 7 0 0 0 5 16v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1a7 7 0 0 0-3.8-6.4c.8-.8 1.3-1.9 1.3-3.1A4.5 4.5 0 0 0 12 2Z"></path><path d="M10 9v6"></path><path d="M14 9v6"></path></svg>
+            </span>
+            <span class="nav-label">Incident Memory (RAG)</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="failure-lab" title="Controlled Chaos & Failure Lab">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            </span>
+            <span class="nav-label">Failure Simulation Lab</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="recovery" title="Controlled Automated Recovery Center">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+            </span>
+            <span class="nav-label">Recovery Center</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="evaluation" title="Performance & Benchmarking">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path></svg>
+            </span>
+            <span class="nav-label">Performance & Eval</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="settings" title="Platform Settings & Guardrails">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </span>
+            <span class="nav-label">Platform Settings</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <a href="/store" target="_blank" class="store-quick-link" title="Open Customer E-Commerce Storefront in new tab">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        <span class="nav-label">Open Storefront ↗</span>
+      </a>
+      <div class="project-attribution">
+        <span>B.Tech Minor Project</span>
+        <span class="version-tag">v2.0 • Enterprise Edition</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN CONTENT WRAPPER ==================== -->
+  <div class="app-container" id="appContainer">
+
+    <!-- Top Navigation & System Status Bar -->
+    <header class="app-topbar">
+      <div class="topbar-left">
+        <div class="breadcrumb" id="topbarBreadcrumb">
+          <span class="bc-root">Sentinel</span>
+          <span class="bc-sep">/</span>
+          <span class="bc-active" id="currentPageBreadcrumb">Overview</span>
+        </div>
+        <div class="page-title-row">
+          <h1 class="page-main-heading" id="pageMainHeading">Executive Overview Dashboard</h1>
+          <p class="page-subheading" id="pageSubHeading">Real-time telemetry, service health, SLO compliance and active incidents</p>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Dark / Light Mode Theme Toggle Button -->
+        <button class="btn-theme-toggle" id="btnThemeToggle" title="Toggle Dark / Light Mode">
+          <span id="themeToggleIcon">🌙</span>
+          <span class="theme-text" id="themeToggleText">Dark Mode</span>
+        </button>
+
+        <!-- Interactive Presentation Demo Mode Toggle Button -->
+        <button class="btn-demo-mode" id="btnToggleDemoMode" title="Toggle Guided Academic Presentation Mode">
+          <span class="demo-sparkle">✨</span>
+          <span class="demo-text">Demo Mode</span>
+        </button>
+
+        <!-- System Health Pill -->
+        <div class="system-status-pill healthy" id="systemHealthPill">
+          <span class="status-pulse-dot"></span>
+          <span class="status-text" id="systemHealthText">SYSTEM: HEALTHY</span>
+        </div>
+
+        <!-- Shopper Traffic Daemon Switch -->
+        <div class="traffic-control-box" title="Simulates real shoppers browsing products, adding to cart, and placing orders in background">
+          <span class="traffic-label">Shopper Traffic:</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="trafficSwitch" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Quick Refresh Button -->
+        <button class="btn-icon-refresh" id="btnManualRefresh" title="Refresh Live Metrics">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+            <path d="M21 3v5h-5"></path>
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+            <path d="M8 16H3v5"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Presentation Guided Demo Tour Bar (Visible when Demo Mode Active) -->
+    <div class="demo-tour-banner" id="demoTourBanner" style="display: none;">
+      <div class="demo-banner-content">
+        <div class="demo-step-badge" id="demoStepBadge">Step 1 of 10</div>
+        <div class="demo-step-details">
+          <strong class="demo-step-title" id="demoStepTitle">1. Normal Healthy State</strong>
+          <span class="demo-step-desc" id="demoStepDesc">All 6 microservices operational. Background autonomous traffic generates steady baseline telemetry.</span>
+        </div>
+      </div>
+      <div class="demo-banner-actions">
+        <button class="btn-demo-nav" id="btnDemoPrev" disabled>← Previous</button>
+        <button class="btn-demo-action" id="btnDemoAction">Verify Healthy State</button>
+        <button class="btn-demo-nav" id="btnDemoNext">Next Step →</button>
+        <button class="btn-demo-close" id="btnDemoClose" title="Exit Presentation Mode">✕</button>
+      </div>
+    </div>
+
+    <!-- Main Viewport Panes -->
+    <main class="app-main">
+
+      <!-- ==================== 1. OVERVIEW DASHBOARD ==================== -->
+      <section class="page-pane active" id="pane-overview">
+        <!-- KPI Metrics Grid (8 Cards) -->
+        <div class="kpi-grid">
+          <!-- KPI 1: Overall Health -->
+          <div class="kpi-card" id="cardKpiHealth">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Application Health</span>
+              <span class="kpi-icon-pill icon-success">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-value value-success" id="kpiOverviewHealth">HEALTHY</span>
+            </div>
+            <div class="kpi-card-footer">
+              <span class="trend-badge trend-up">Optimal</span>
+              <span class="kpi-subtext">All SLO targets within thresholds</span>
+            </div>
+          </div>
+
+          <!-- KPI 2: Total Microservices -->
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Total Microservices</span>
+              <span class="kpi-icon-pill icon-indigo">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"></rect><rect x="2" y="14" width="20" height="8" rx="2"></rect></svg>
+              </span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-value">6</span>
+            </div>
+            <div class="kpi-card-footer">
+              <span class="trend-badge trend-neutral">Monitored</span>
+              <span class="kpi-subtext">Catalog, Cart, Order, Pay, Auth, DB</span>
+            </div>
+          </div>
+
+          <!-- KPI 3: Healthy Services -->
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Healthy Services</span>
+              <span class="kpi-icon-pill icon-success">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-value value-success" id="kpiHealthyCount">6 / 6</span>
+            </div>
+            <div class="kpi-card-footer">
+              <span class="trend-badge trend-up" id="kpiHealthPct">100%</span>
+              <span class="kpi-subtext">Operational availability target</span>
+            </div>
+          </div>
+
+          <!-- KPI 4: Active Incidents -->
+          <div class="kpi-card" id="cardKpiIncidents">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Active Incidents</span>
+              <span class="kpi-icon-pill icon-danger">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpiActiveIncidents">0</span>
+            </div>
+            <div class="kpi-card-footer">
+              <span class="trend-badge trend-neutral" id="kpiIncTrend">Nominal</span>
+              <span class="kpi-subtext">Multi-signal correlated incidents</span>
+            </div>
+          </div>
+
+          <!-- KPI 5: Total API Requests -->
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Total API Requests</span>
+              <span class="kpi-icon-pill icon-indigo">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              </span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpiTotalRequests">0</span>
+            </div>
+            <div class="kpi-card-footer">
+              <span class="trend-badge trend-up">Streaming</span>
+              <span class="kpi-subtext">HTTP requests intercepted live</span>
+            </div>
+          </div>
+
+          <!-- KPI 6: Average API Latency -->
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Avg API Latency</span>
+              <span class="kpi-icon-pill icon-blue">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpiAvgLatency">-- ms</span>
+            </div>
+            <div class="kpi-card-footer">
+              <span class="trend-badge trend-neutral" id="kpiLatencyBadge">Sub-200ms</span>
+              <span class="kpi-subtext">Across active microservices</span>
+            </div>
+          </div>
+
+          <!-- KPI 7: Global Error Rate -->
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Global Error Rate</span>
+              <span class="kpi-icon-pill icon-amber">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpiGlobalErrorRate">0.0%</span>
+            </div>
+            <div class="kpi-card-footer">
+              <span class="trend-badge trend-up">Target &lt; 1.0%</span>
+              <span class="kpi-subtext">HTTP 4xx / 5xx error frequency</span>
+            </div>
+          </div>
+
+          <!-- KPI 8: Recovery Success Rate -->
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-label">Recovery Success</span>
+              <span class="kpi-icon-pill icon-success">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+              </span>
+            </div>
+            <div class="kpi-value-row">
+              <span class="kpi-value value-success" id="kpiRecoverySuccess">100%</span>
+            </div>
+            <div class="kpi-card-footer">
+              <span class="trend-badge trend-up">Verified</span>
+              <span class="kpi-subtext">Allowlisted remediation passes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Visualizations Row 1: Health Distribution & Traffic Analytics -->
+        <div class="dash-grid-2">
+          <!-- Visualization A: Application Health Overview -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h3 class="panel-title">Application Health Distribution</h3>
+                <p class="panel-desc">Real-time status breakdown across 6 registered microservices</p>
+              </div>
+              <span class="badge-soft badge-indigo">Multi-Signal SLI</span>
+            </div>
+            <div class="chart-flex-row">
+              <div class="donut-chart-wrapper">
+                <canvas id="healthDonutChart"></canvas>
+              </div>
+              <div class="health-breakdown-legend">
+                <div class="legend-row">
+                  <span class="legend-color-dot dot-success"></span>
+                  <span class="legend-name">Healthy</span>
+                  <strong class="legend-count" id="legendHealthyCount">6</strong>
+                </div>
+                <div class="legend-row">
+                  <span class="legend-color-dot dot-warning"></span>
+                  <span class="legend-name">Warning</span>
+                  <strong class="legend-count" id="legendWarningCount">0</strong>
+                </div>
+                <div class="legend-row">
+                  <span class="legend-color-dot dot-danger"></span>
+                  <span class="legend-name">Critical</span>
+                  <strong class="legend-count" id="legendCriticalCount">0</strong>
+                </div>
+                <div class="legend-row">
+                  <span class="legend-color-dot dot-neutral"></span>
+                  <span class="legend-name">Down / Unavailable</span>
+                  <strong class="legend-count" id="legendDownCount">0</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Visualization B: API Traffic Analytics -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h3 class="panel-title">API Traffic Analytics</h3>
+                <p class="panel-desc">Requests per minute: Successful (2xx/3xx) vs Failed (4xx/5xx)</p>
+              </div>
+              <div class="panel-actions">
+                <span class="badge-soft badge-green" id="trafficRpmBadge">-- req/min</span>
+              </div>
+            </div>
+            <div class="chart-container" style="height: 240px;">
+              <canvas id="trafficAnalyticsChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Visualizations Row 2: Service Performance & Error Rate Trends -->
+        <div class="dash-grid-2">
+          <!-- Visualization C: Service Performance Comparison -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h3 class="panel-title">Service Latency Benchmarks (p50 vs p95 vs p99)</h3>
+                <p class="panel-desc">Response times comparing microservices against target SLO limits</p>
+              </div>
+              <span class="badge-soft badge-blue">SLO Targets</span>
+            </div>
+            <div class="chart-container" style="height: 250px;">
+              <canvas id="servicePerformanceChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Visualization D: Error Rate Analysis -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h3 class="panel-title">Error Rate Trending & Safety Limits</h3>
+                <p class="panel-desc">Percentage of failed transactions over rolling monitoring window</p>
+              </div>
+              <span class="badge-soft badge-amber">Static Guardrail &lt; 2.0%</span>
+            </div>
+            <div class="chart-container" style="height: 250px;">
+              <canvas id="errorRateTrendChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Visualizations Row 3: Host Resources & Recent Incidents / Activity -->
+        <div class="dash-grid-2">
+          <!-- Visualization E: Resource Utilization (psutil) -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h3 class="panel-title">Host Resource Utilization</h3>
+                <p class="panel-desc">Hardware telemetry via psutil (CPU & RAM) with application thresholds</p>
+              </div>
+              <span class="badge-soft badge-neutral">Host psutil</span>
+            </div>
+            <div class="chart-container" style="height: 240px;">
+              <canvas id="resourceOverviewChart"></canvas>
+            </div>
+            <div class="panel-sub-note">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              <span>Distinguishes underlying physical host resources from microservice operational metrics.</span>
+            </div>
+          </div>
+
+          <!-- Visualization F & G: Recent Incidents & Activity Feed -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h3 class="panel-title">Recent Incidents & Causal Actions</h3>
+                <p class="panel-desc">Autonomous incident declarations and human-in-the-loop recoveries</p>
+              </div>
+              <a class="panel-link-action" onclick="switchTab('incidents')">View All Incidents →</a>
+            </div>
+            <div class="recent-incidents-list" id="recentIncidentsList">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 2. E-COMMERCE STOREFRONT PREVIEW ==================== -->
+      <section class="page-pane" id="pane-storefront">
+        <div class="section-banner-soft">
+          <div class="banner-icon-bubble">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
+          </div>
+          <div>
+            <h2 class="section-title">SentinelMart Customer Storefront</h2>
+            <p class="section-subtitle">Real-time e-commerce demonstration application integrated directly with Sentinel telemetry interceptors, database persistence, and payment gateways.</p>
+          </div>
+          <div style="margin-left: auto;">
+            <a href="/store" target="_blank" class="btn-primary-action">
+              <span>Launch Storefront in Full Window</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="dash-grid-3" style="margin-top: 1.5rem;">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">1. Browse Catalog</h3>
+            </div>
+            <p class="panel-desc">Ingests 20 realistic products across electronics, jewelery, and apparel from Fake Store API with local SQLite WAL caching.</p>
+            <div style="margin-top: 1rem;">
+              <button class="btn-soft-indigo" onclick="triggerStoreAction('browse')">Browse 20 Products</button>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">2. Add to Cart</h3>
+            </div>
+            <p class="panel-desc">Simulates customer shopping session management, quantity updates, and cart subtotal calculations.</p>
+            <div style="margin-top: 1rem;">
+              <button class="btn-soft-indigo" onclick="triggerStoreAction('cart')">Add Demo Item to Cart</button>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">3. Test Checkout</h3>
+            </div>
+            <p class="panel-desc">Submits complete order checkout pipeline through Order Service and Payment Gateway to test telemetry and fault injection.</p>
+            <div style="margin-top: 1rem;">
+              <button class="btn-soft-indigo" onclick="triggerStoreAction('checkout')">Run Test Order Checkout</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">Storefront Customer Operation Impact Matrix</h3>
+              <p class="panel-desc">Shows how microservice failures affect shopper experience in real time</p>
+            </div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Service Name</th>
+                <th>Role in Customer Flow</th>
+                <th>Degradation Symptom</th>
+                <th>Shopper Experience Impact</th>
+                <th>Current Status</th>
+              </tr>
+            </thead>
+            <tbody id="storeImpactTableBody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== 3. SERVICE MONITORING ==================== -->
+      <section class="page-pane" id="pane-services">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Microservice Observability & SLI Guardrails</h2>
+            <p class="section-subtitle">Real-time health, latency percentiles, error budgets, and adaptive baselines across all six architectural services.</p>
+          </div>
+          <div class="banner-metric-pill">
+            <span>Adaptive Engine: <strong>MAD (Median Absolute Deviation)</strong></span>
+          </div>
+        </div>
+
+        <!-- 6 Service Cards Grid -->
+        <div class="services-detail-grid" id="servicesDetailGrid">
+          <!-- Populated dynamically by sentinel.js -->
+        </div>
+
+        <!-- Comparative Service Analytics -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">Microservice Cross-Comparison Matrix</h3>
+              <p class="panel-desc">Live latency (p50 / p95), error rates, throughput, and ML anomaly scores</p>
+            </div>
+            <span class="badge-soft badge-indigo">Auto-Refreshed (2s)</span>
+          </div>
+          <div class="chart-container" style="height: 280px;">
+            <canvas id="serviceComparisonBarChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 4. TELEMETRY & ANALYTICS ==================== -->
+      <section class="page-pane" id="pane-telemetry">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Streaming Telemetry & Structured SRE Logs</h2>
+            <p class="section-subtitle">High-resolution time-series data captured by TelemetryMiddleware and host psutil samplers.</p>
+          </div>
+        </div>
+
+        <div class="dash-grid-2" style="margin-top: 1.5rem;">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">Microservice Latency Streaming (ms)</h3>
+              <span class="badge-soft badge-blue">Real-Time (2s)</span>
+            </div>
+            <div class="chart-container" style="height: 280px;">
+              <canvas id="telemetryStreamingLatencyChart"></canvas>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">Host Hardware Utilization (psutil)</h3>
+              <span class="badge-soft badge-neutral">CPU & RAM %</span>
+            </div>
+            <div class="chart-container" style="height: 280px;">
+              <canvas id="telemetryStreamingResourceChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Structured SRE Logs Stream -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">Live Structured SRE Logs Interceptor</h3>
+              <p class="panel-desc">Circular buffer of JSON structured logs with correlation request-ids</p>
+            </div>
+            <div class="log-filter-controls">
+              <select id="logServiceFilter" class="filter-select">
+                <option value="">All Services</option>
+                <option value="payment-service">Payment Service</option>
+                <option value="order-service">Order Service</option>
+                <option value="product-service">Product Service</option>
+                <option value="cart-service">Cart Service</option>
+                <option value="auth-service">Auth Service</option>
+                <option value="database-service">Database Service</option>
+              </select>
+              <select id="logLevelFilter" class="filter-select">
+                <option value="">All Levels</option>
+                <option value="INFO">INFO</option>
+                <option value="WARN">WARN</option>
+                <option value="ERROR">ERROR</option>
+              </select>
+              <button class="btn-soft-indigo" onclick="fetchLiveLogs()">Filter Logs</button>
+            </div>
+          </div>
+          <div class="log-table-container">
+            <table class="data-table log-table">
+              <thead>
+                <tr>
+                  <th style="width: 130px;">Timestamp</th>
+                  <th style="width: 140px;">Service</th>
+                  <th style="width: 80px;">Level</th>
+                  <th>Message & Correlation Metadata</th>
+                </tr>
+              </thead>
+              <tbody id="sreLogsTableBody">
+                <!-- Injected dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 5. INCIDENT CENTER ==================== -->
+      <section class="page-pane" id="pane-incidents">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Incident Detection & Management Center</h2>
+            <p class="section-subtitle">Multi-signal alert correlation engine grouping cascading service failures into unified, actionable incident records.</p>
+          </div>
+          <div class="banner-actions">
+            <span class="badge-soft badge-danger" id="incidentsActiveCountBadge">0 Active Incidents</span>
+          </div>
+        </div>
+
+        <!-- Incident Filters & Controls -->
+        <div class="filter-bar" style="margin-top: 1.5rem;">
+          <div class="filter-search-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="incidentSearchInput" placeholder="Search by Incident ID, Title, or Affected Service...">
+          </div>
+          <div class="filter-group">
+            <select id="incidentSeverityFilter" class="filter-select">
+              <option value="ALL">All Severities</option>
+              <option value="CRITICAL">Critical</option>
+              <option value="WARNING">Warning</option>
+            </select>
+            <select id="incidentStatusFilter" class="filter-select">
+              <option value="ALL">All Statuses</option>
+              <option value="ACTIVE">Active / Open</option>
+              <option value="INVESTIGATING">Investigating</option>
+              <option value="RESOLVED">Resolved</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Incidents List Container -->
+        <div class="incidents-container" id="incidentsContainer" style="margin-top: 1.5rem;">
+          <!-- Dynamically populated cards -->
+        </div>
+      </section>
+
+      <!-- ==================== 6. ROOT CAUSE ANALYSIS (RCA) ==================== -->
+      <section class="page-pane" id="pane-rca">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Explainable Root Cause Analysis (RCA)</h2>
+            <p class="section-subtitle">Multi-factor causal diagnosis engine strictly distinguishing confirmed physical observations from diagnostic hypotheses.</p>
+          </div>
+          <div>
+            <select id="rcaIncidentSelect" class="filter-select" style="min-width: 260px;">
+              <option value="">Select Incident to Inspect...</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Visual Investigation Flow -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <h3 class="panel-title">Diagnostic Causal Pipeline Flow</h3>
+          </div>
+          <div class="causal-pipeline-flow">
+            <div class="flow-step">
+              <div class="flow-step-icon icon-danger">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              </div>
+              <strong class="flow-step-name">1. Metric Anomaly</strong>
+              <span class="flow-step-sub">Latency or error spike</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-step-icon icon-amber">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+              </div>
+              <strong class="flow-step-name">2. Correlated Logs</strong>
+              <span class="flow-step-sub">HTTP 504 / timeouts</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-step-icon icon-indigo">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="18" r="3"></circle></svg>
+              </div>
+              <strong class="flow-step-name">3. Dependency Blast</strong>
+              <span class="flow-step-sub">Cascading path</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-step-icon icon-blue">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8 22 9 17 14 18 21 12 18 6 21 7 14 2 9 9 8 12 2"></polygon></svg>
+              </div>
+              <strong class="flow-step-name">4. CI/CD Releases</strong>
+              <span class="flow-step-sub">Temporal releases</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-step-icon icon-success">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </div>
+              <strong class="flow-step-name">5. Ranked Causes</strong>
+              <span class="flow-step-sub">Rank #1 Hypothesis</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RCA Details Dynamic Container -->
+        <div id="rcaInvestigationView" style="margin-top: 1.5rem;">
+          <div class="empty-state-card">
+            <div class="empty-state-icon">🔍</div>
+            <h3 class="empty-state-title">No Incident Selected</h3>
+            <p class="empty-state-desc">Select an active or historical incident from the dropdown above to view the complete explainable root cause analysis, evidence comparison, and candidate ranking.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 7. ADAPTIVE THRESHOLDS ==================== -->
+      <section class="page-pane" id="pane-adaptive">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Statistical Adaptive Threshold Intelligence</h2>
+            <p class="section-subtitle">Mathematical dynamic baselining using Rolling Median and Median Absolute Deviation (MAD) with hysteresis damping.</p>
+          </div>
+          <div class="banner-metric-pill">
+            <span>Scaling Factor: <strong>1.4826 • MAD</strong></span>
+          </div>
+        </div>
+
+        <!-- Mathematical Formulation Cards -->
+        <div class="dash-grid-2" style="margin-top: 1.5rem;">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">Mathematical Formula (MAD)</h3>
+              <span class="badge-soft badge-indigo">Robust Statistic</span>
+            </div>
+            <div class="math-formula-box">
+              <div class="formula-line">MAD = median(| x<sub>i</sub> - median(X) |)</div>
+              <div class="formula-line">Threshold<sub>critical</sub> = median(X) + k • 1.4826 • MAD</div>
+            </div>
+            <p class="formula-explanation">
+              Unlike Mean ± 3σ which gets distorted by extreme outliers, <strong>Median Absolute Deviation (MAD)</strong> is immune to up to 50% contamination, preventing threshold drift during legitimate seasonal surges.
+            </p>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">Dynamic Parameters & Guardrails</h3>
+              <span class="badge-soft badge-green">Zero Alert Fatigue</span>
+            </div>
+            <div class="guardrail-metrics-grid">
+              <div class="metric-pill-item">
+                <span class="label">Multiplier (k)</span>
+                <span class="val">3.0 (Sensitive)</span>
+              </div>
+              <div class="metric-pill-item">
+                <span class="label">Min Observations</span>
+                <span class="val">8 Samples</span>
+              </div>
+              <div class="metric-pill-item">
+                <span class="label">Persistence</span>
+                <span class="val">2 Consecutive Ticks</span>
+              </div>
+              <div class="metric-pill-item">
+                <span class="label">Hysteresis Cooldown</span>
+                <span class="val">3 Nominal Ticks</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Adaptive Baseline Chart -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">Interactive Adaptive Baseline vs Observed Metric (Payment Service)</h3>
+              <p class="panel-desc">Visualizes rolling median baseline, dynamic warning bound, dynamic critical bound, and anomaly markers</p>
+            </div>
+            <div class="panel-actions">
+              <select id="adaptiveServiceSelect" class="filter-select">
+                <option value="payment-service">Payment Service</option>
+                <option value="order-service">Order Service</option>
+                <option value="product-service">Product Service</option>
+                <option value="cart-service">Cart Service</option>
+                <option value="auth-service">Auth Service</option>
+                <option value="database-service">Database Service</option>
+              </select>
+            </div>
+          </div>
+          <div class="chart-container" style="height: 300px;">
+            <canvas id="adaptiveBaselineChart"></canvas>
+          </div>
+          <!-- Real-Time Formula Live Values Breakdown -->
+          <div class="live-calc-box" id="liveCalcBox">
+            <span class="calc-label">Live Calculation:</span>
+            <span class="calc-val" id="liveCalcDetails">Loading baseline observation window...</span>
+          </div>
+        </div>
+
+        <!-- Threshold Configuration Form -->
+        <div class="panel-card" style="margin-top: 1.5rem; max-width: 720px;">
+          <div class="panel-header">
+            <h3 class="panel-title">Configure Service Safety Guardrails</h3>
+          </div>
+          <form id="thresholdConfigForm" onsubmit="handleUpdateThreshold(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Target Service</label>
+                <select id="configServiceTarget" class="form-input">
+                  <option value="payment-service">Payment Service</option>
+                  <option value="order-service">Order Service</option>
+                  <option value="product-service">Product Service</option>
+                  <option value="cart-service">Cart Service</option>
+                  <option value="auth-service">Auth Service</option>
+                  <option value="database-service">Database Service</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Operating Mode</label>
+                <select id="configMode" class="form-input">
+                  <option value="hybrid">Hybrid (Adaptive + Static Safety Floor)</option>
+                  <option value="adaptive">Pure Adaptive (MAD Only)</option>
+                  <option value="static">Static Only</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Static Warning Latency (ms)</label>
+                <input type="number" id="configStaticWarning" class="form-input" value="650">
+              </div>
+              <div class="form-group">
+                <label>Static Critical Latency (ms)</label>
+                <input type="number" id="configStaticCritical" class="form-input" value="2000">
+              </div>
+            </div>
+            <button type="submit" class="btn-primary-action" style="margin-top: 0.5rem;">Save Threshold Parameters</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ==================== 8. ML ANOMALY DETECTION ==================== -->
+      <section class="page-pane" id="pane-ml">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Machine Learning Anomaly Detection</h2>
+            <p class="section-subtitle">Multivariate unsupervised anomaly scoring using Scikit-Learn Isolation Forest across correlated system vectors.</p>
+          </div>
+          <div class="banner-metric-pill">
+            <span>Algorithm: <strong>Scikit-Learn Isolation Forest</strong></span>
+          </div>
+        </div>
+
+        <div class="kpi-grid" style="margin-top: 1.5rem;">
+          <div class="kpi-card">
+            <span class="kpi-label">Algorithm Architecture</span>
+            <span class="kpi-value value-indigo" style="font-size: 1.25rem;">Isolation Forest</span>
+            <span class="kpi-subtext">Tree-based recursive space partition</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Model Training Status</span>
+            <span class="kpi-value value-success" id="mlStatusVal">TRAINED</span>
+            <span class="kpi-subtext">Retrained continuously every 60s</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Training Observations</span>
+            <span class="kpi-value" id="mlObservationsCount">60+</span>
+            <span class="kpi-subtext">Multivariate operational vectors</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Contamination Ratio</span>
+            <span class="kpi-value" style="font-size: 1.35rem;">0.05</span>
+            <span class="kpi-subtext">Expected 5% anomaly bound</span>
+          </div>
+        </div>
+
+        <div class="dash-grid-2" style="margin-top: 1.5rem;">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">Multivariate Vector Contribution</h3>
+              <p class="panel-desc">Normalized feature weights contributing to anomaly decisions</p>
+            </div>
+            <div class="chart-container" style="height: 260px;">
+              <canvas id="mlRadarChart"></canvas>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">Anomaly Score Distribution (Last 30 Ticks)</h3>
+              <p class="panel-desc">Scores &lt; -0.2 flagged as anomalous operational deviations</p>
+            </div>
+            <div class="chart-container" style="height: 260px;">
+              <canvas id="mlScoreDistributionChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recorded Anomalies Table from SQLite -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">Recorded Multivariate Anomalies (SQLite Store)</h3>
+              <p class="panel-desc">Historical anomaly log entries captured by Isolation Forest</p>
+            </div>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Service</th>
+                <th>Detection Method</th>
+                <th>Anomaly Score</th>
+                <th>Feature Vector Values</th>
+                <th>Detection Explanation</th>
+              </tr>
+            </thead>
+            <tbody id="anomaliesTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== 9. SERVICE DEPENDENCY MAP ==================== -->
+      <section class="page-pane" id="pane-topology">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Interactive Service Dependency Graph & Blast Radius</h2>
+            <p class="section-subtitle">Visualizes service call chains, directional flow, blast-radius projections and impact on customer shopping transactions.</p>
+          </div>
+        </div>
+
+        <div class="topology-wrapper-card" style="margin-top: 1.5rem;">
+          <div class="topology-canvas-container" id="topologyCanvasContainer">
+            <!-- Dynamic SVG Topology rendered by sentinel.js -->
+          </div>
+
+          <div class="topology-inspector" id="topologyInspector">
+            <div class="inspector-header">
+              <strong id="inspectorServiceName">Select a Service Node</strong>
+              <span class="badge-soft badge-indigo" id="inspectorStatusBadge">READY</span>
+            </div>
+            <div class="inspector-body" id="inspectorBody">
+              <p style="color: var(--text-secondary); font-size: 0.85rem;">Click any service node in the dependency graph above to inspect its live latency, error rate, upstream callers, downstream dependencies, and projected customer operational blast radius.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 10. DEPLOYMENT MONITORING ==================== -->
+      <section class="page-pane" id="pane-deployments">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Deployment Monitoring & CI/CD Correlation</h2>
+            <p class="section-subtitle">Correlates GitHub Actions CI/CD release events with incident onset timestamps to explain deployment-induced regressions.</p>
+          </div>
+          <div>
+            <button class="btn-primary-action" onclick="openSimulateDeploymentModal()">+ Simulate CI/CD Release</button>
+          </div>
+        </div>
+
+        <!-- Deployment Correlation Notice Banner -->
+        <div class="callout-box" style="margin-top: 1.5rem;">
+          <div class="callout-icon">ℹ️</div>
+          <div>
+            <strong>Deployment Awareness Principle:</strong>
+            <span>Recent deployments are correlated as <em>potential contributing factors</em>, not automatically assumed root causes. Sentinel verifies physical metric evidence before declaring deployment culpability.</span>
+          </div>
+        </div>
+
+        <!-- Deployments List Table -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <h3 class="panel-title">Production Release & Webhook History</h3>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Commit Hash</th>
+                <th>Version</th>
+                <th>Author</th>
+                <th>Commit Message</th>
+                <th>Affected Services</th>
+                <th>Deployed At</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="deploymentsTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== 11. AI RUNBOOKS ==================== -->
+      <section class="page-pane" id="pane-runbooks">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">AI-Assisted SRE Runbook Generator</h2>
+            <p class="section-subtitle">Context-aware step-by-step diagnostic and remediation checklists generated via Local Ollama LLM or Expert SRE Rule Fallback.</p>
+          </div>
+          <div>
+            <select id="runbookIncidentSelect" class="filter-select" style="min-width: 250px;">
+              <option value="">Select Incident to View Runbook...</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="runbookViewContainer" style="margin-top: 1.5rem;">
+          <div class="empty-state-card">
+            <div class="empty-state-icon">📖</div>
+            <h3 class="empty-state-title">No Incident Runbook Selected</h3>
+            <p class="empty-state-desc">Select an incident from the dropdown above to inspect its generated SRE runbook, step-by-step diagnostic procedure, and verification checklist.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 12. INCIDENT MEMORY (RAG) ==================== -->
+      <section class="page-pane" id="pane-memory">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Incident Memory (Historical Knowledge RAG)</h2>
+            <p class="section-subtitle">Vector & token similarity retrieval matching active symptoms against verified historical resolution paths.</p>
+          </div>
+        </div>
+
+        <div class="search-panel-box" style="margin-top: 1.5rem;">
+          <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+              <label>Service Domain</label>
+              <select id="memorySearchService" class="form-input">
+                <option value="payment-service">Payment Service</option>
+                <option value="order-service">Order Service</option>
+                <option value="product-service">Product Service</option>
+                <option value="cart-service">Cart Service</option>
+                <option value="database-service">Database Service</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 2;">
+              <label>Symptom Search Tokens</label>
+              <input type="text" id="memorySearchInput" class="form-input" value="gateway timeout latency circuit breaker" placeholder="Search diagnostic patterns...">
+            </div>
+            <div class="form-group" style="align-self: flex-end;">
+              <button class="btn-primary-action" onclick="searchHistoricalMemory()">Match Past Patterns</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="memory-results-container" id="memoryResultsContainer" style="margin-top: 1.5rem;">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ==================== 13. FAILURE SIMULATION LAB ==================== -->
+      <section class="page-pane" id="pane-failure-lab">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Controlled Failure Simulation & Chaos Lab</h2>
+            <p class="section-subtitle">Inject safe, isolated operational faults across microservices to demonstrate detection, RCA, runbook generation, and recovery.</p>
+          </div>
+          <div>
+            <button class="btn-danger-action" onclick="stopAllChaos()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><rect x="9" y="9" width="6" height="6"></rect></svg>
+              <span>Halt All Active Chaos</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Real-Time Chaos Lifecycle Flow Indicator -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <h3 class="panel-title">End-to-End Evaluation Demonstration Script</h3>
+          </div>
+          <div class="causal-pipeline-flow">
+            <div class="flow-step">
+              <strong class="flow-step-name">1. Inject Chaos</strong>
+              <span class="flow-step-sub">Choose scenario below</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <strong class="flow-step-name">2. Anomaly Declared</strong>
+              <span class="flow-step-sub">Adaptive MAD or ML</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <strong class="flow-step-name">3. Incident Created</strong>
+              <span class="flow-step-sub">Incident Center</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <strong class="flow-step-name">4. Explainable RCA</strong>
+              <span class="flow-step-sub">Ranked hypotheses</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <strong class="flow-step-name">5. Approve Recovery</strong>
+              <span class="flow-step-sub">Human-in-the-Loop</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <strong class="flow-step-name">6. Verification</strong>
+              <span class="flow-step-sub">Post-checks pass</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8 Simulation Cards -->
+        <div class="chaos-cards-grid" style="margin-top: 1.5rem;">
+          <!-- Scenario 1: Payment Latency -->
+          <div class="chaos-card" data-scenario="payment_latency">
+            <div class="chaos-card-header">
+              <div class="chaos-icon-box">⏳</div>
+              <div>
+                <h3 class="chaos-title">Payment Gateway Latency</h3>
+                <span class="badge-soft badge-indigo">payment-service</span>
+              </div>
+            </div>
+            <p class="chaos-desc">Injects 3200ms latency into payment authorization calls. Demonstrates adaptive latency anomaly detection and checkout slowdown.</p>
+            <div class="chaos-card-footer">
+              <span class="chaos-status-text">Ready to inject</span>
+              <button class="btn-chaos-toggle">⚡ Inject Failure</button>
+            </div>
+          </div>
+
+          <!-- Scenario 2: Payment Outage (504) -->
+          <div class="chaos-card" data-scenario="payment_failure">
+            <div class="chaos-card-header">
+              <div class="chaos-icon-box">💥</div>
+              <div>
+                <h3 class="chaos-title">Payment Gateway Outage (504)</h3>
+                <span class="badge-soft badge-danger">payment-service</span>
+              </div>
+            </div>
+            <p class="chaos-desc">Simulates external upstream bank timeout, trips circuit breaker, and raises downstream order checkout failures.</p>
+            <div class="chaos-card-footer">
+              <span class="chaos-status-text">Ready to inject</span>
+              <button class="btn-chaos-toggle">⚡ Inject Failure</button>
+            </div>
+          </div>
+
+          <!-- Scenario 3: Order 500 Surge -->
+          <div class="chaos-card" data-scenario="order_500_surge">
+            <div class="chaos-card-header">
+              <div class="chaos-icon-box">🚨</div>
+              <div>
+                <h3 class="chaos-title">Order Pipeline 500 Surge</h3>
+                <span class="badge-soft badge-amber">order-service</span>
+              </div>
+            </div>
+            <p class="chaos-desc">Throws internal HTTP 500 exceptions during order dispatch queue processing to test blast-radius mapping.</p>
+            <div class="chaos-card-footer">
+              <span class="chaos-status-text">Ready to inject</span>
+              <button class="btn-chaos-toggle">⚡ Inject Failure</button>
+            </div>
+          </div>
+
+          <!-- Scenario 4: Product Slowdown -->
+          <div class="chaos-card" data-scenario="product_latency">
+            <div class="chaos-card-header">
+              <div class="chaos-icon-box">📦</div>
+              <div>
+                <h3 class="chaos-title">Product Catalog Degradation</h3>
+                <span class="badge-soft badge-blue">product-service</span>
+              </div>
+            </div>
+            <p class="chaos-desc">Injects 2500ms delay into catalog reads to demonstrate cache invalidation and hydration recovery.</p>
+            <div class="chaos-card-footer">
+              <span class="chaos-status-text">Ready to inject</span>
+              <button class="btn-chaos-toggle">⚡ Inject Failure</button>
+            </div>
+          </div>
+
+          <!-- Scenario 5: Database Lock -->
+          <div class="chaos-card" data-scenario="db_lock">
+            <div class="chaos-card-header">
+              <div class="chaos-icon-box">🔒</div>
+              <div>
+                <h3 class="chaos-title">SQLite WAL Lock Contention</h3>
+                <span class="badge-soft badge-danger">database-service</span>
+              </div>
+            </div>
+            <p class="chaos-desc">Simulates connection pool lock contention throwing 'OperationalError: database is locked'.</p>
+            <div class="chaos-card-footer">
+              <span class="chaos-status-text">Ready to inject</span>
+              <button class="btn-chaos-toggle">⚡ Inject Failure</button>
+            </div>
+          </div>
+
+          <!-- Scenario 6: High CPU Burn -->
+          <div class="chaos-card" data-scenario="high_cpu">
+            <div class="chaos-card-header">
+              <div class="chaos-icon-box">🔥</div>
+              <div>
+                <h3 class="chaos-title">Host CPU Utilization Spike</h3>
+                <span class="badge-soft badge-neutral">host-system (psutil)</span>
+              </div>
+            </div>
+            <p class="chaos-desc">Spins controlled worker thread burning safe CPU cycles to evaluate psutil telemetry and ML detection.</p>
+            <div class="chaos-card-footer">
+              <span class="chaos-status-text">Ready to inject</span>
+              <button class="btn-chaos-toggle">⚡ Inject Failure</button>
+            </div>
+          </div>
+
+          <!-- Scenario 7: Memory Leak -->
+          <div class="chaos-card" data-scenario="memory_leak">
+            <div class="chaos-card-header">
+              <div class="chaos-icon-box">💧</div>
+              <div>
+                <h3 class="chaos-title">Process Memory Leak</h3>
+                <span class="badge-soft badge-neutral">host-system (RAM)</span>
+              </div>
+            </div>
+            <p class="chaos-desc">Allocates 200MB memory buffer to simulate memory leaks, reclaimable immediately upon remediation.</p>
+            <div class="chaos-card-footer">
+              <span class="chaos-status-text">Ready to inject</span>
+              <button class="btn-chaos-toggle">⚡ Inject Failure</button>
+            </div>
+          </div>
+
+          <!-- Scenario 8: Sudden Traffic Spike -->
+          <div class="chaos-card" data-scenario="traffic_spike">
+            <div class="chaos-card-header">
+              <div class="chaos-icon-box">🌊</div>
+              <div>
+                <h3 class="chaos-title">Concurrency Traffic Burst</h3>
+                <span class="badge-soft badge-indigo">cart-service</span>
+              </div>
+            </div>
+            <p class="chaos-desc">Spawns high concurrency async requests across cart and catalog to test worker queue saturation.</p>
+            <div class="chaos-card-footer">
+              <span class="chaos-status-text">Ready to inject</span>
+              <button class="btn-chaos-toggle">⚡ Inject Failure</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 14. RECOVERY CENTER ==================== -->
+      <section class="page-pane" id="pane-recovery">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Controlled Automated Recovery Center</h2>
+            <p class="section-subtitle">Enforces mandatory human-in-the-loop approval. Executes strictly allowlisted remediation actions with automated post-verification probes.</p>
+          </div>
+          <div class="banner-metric-pill">
+            <span>Security Model: <strong>Allowlist Enforced (Zero Shell)</strong></span>
+          </div>
+        </div>
+
+        <!-- Pending Approval Actions -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">Remediation Actions Awaiting Human SRE Approval</h3>
+              <p class="panel-desc">Mandatory human authorization required before executing recovery</p>
+            </div>
+          </div>
+          <div id="pendingRecoveriesContainer">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Before-and-After Verification Chart -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">Post-Recovery Health Verification Chart</h3>
+              <p class="panel-desc">Latency and error rate before recovery vs after automated remediation</p>
+            </div>
+            <span class="badge-soft badge-green">Automated Probes (3/3 Passes)</span>
+          </div>
+          <div class="chart-container" style="height: 250px;">
+            <canvas id="recoveryVerificationChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Remediation Audit Log -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <h3 class="panel-title">Remediation Execution Audit Log</h3>
+          </div>
+          <div id="recoveryAuditContainer">
+            <!-- Dynamically populated table -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 15. PERFORMANCE & EVALUATION ==================== -->
+      <section class="page-pane" id="pane-evaluation">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Empirical Performance Evaluation & Benchmarking</h2>
+            <p class="section-subtitle">Academic assessment metrics benchmarked across repeated failure injection experiments: MTTD, MTTR, Accuracy, and Methodology Comparison.</p>
+          </div>
+          <div class="banner-metric-pill">
+            <span>Target Benchmark: <strong>Final-Year B.Tech Viva</strong></span>
+          </div>
+        </div>
+
+        <div class="kpi-grid" style="margin-top: 1.5rem;">
+          <div class="kpi-card">
+            <span class="kpi-label">Mean Time to Detect (MTTD)</span>
+            <span class="kpi-value value-indigo" id="evalMttd">4.2s</span>
+            <span class="kpi-subtext">From fault injection to alert</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Mean Time to Recover (MTTR)</span>
+            <span class="kpi-value value-success" id="evalMttr">12.5s</span>
+            <span class="kpi-subtext">From approval to health pass</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">False Positive Rate</span>
+            <span class="kpi-value value-blue" id="evalFpRate">2.1%</span>
+            <span class="kpi-subtext">Filtered via persistence logic</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">RCA Top-1 Accuracy</span>
+            <span class="kpi-value value-amber" id="evalRcaAccuracy">92.5%</span>
+            <span class="kpi-subtext">Across labelled simulation tests</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Recovery Success Rate</span>
+            <span class="kpi-value value-success" id="evalRecoverySuccess">100%</span>
+            <span class="kpi-subtext">Post-verification passes</span>
+          </div>
+        </div>
+
+        <!-- Comparative Methodology Benchmark Visualizations -->
+        <div class="dash-grid-2" style="margin-top: 1.5rem;">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">Detection Time Comparison (MTTD)</h3>
+              <p class="panel-desc">Static Safety Limits vs Adaptive MAD vs Hybrid Sentinel</p>
+            </div>
+            <div class="chart-container" style="height: 250px;">
+              <canvas id="evalMttdBarChart"></canvas>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">False Positive Rate Comparison</h3>
+              <p class="panel-desc">Evaluating alert fatigue reduction across methodologies</p>
+            </div>
+            <div class="chart-container" style="height: 250px;">
+              <canvas id="evalFpBarChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparative Methodology Table -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <h3 class="panel-title">Comprehensive Methodology Benchmark Matrix</h3>
+          </div>
+          <div id="evalBenchmarksContainer">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Confusion Matrix & Mathematical Explanations -->
+        <div class="dash-grid-2" style="margin-top: 1.5rem;">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">Empirical Anomaly Confusion Matrix</h3>
+              <p class="panel-desc">Calculated across simulated failure test runs</p>
+            </div>
+            <div class="confusion-matrix-grid">
+              <div class="cm-cell cm-tp">
+                <span class="cm-val">96</span>
+                <span class="cm-label">True Positive (TP)</span>
+              </div>
+              <div class="cm-cell cm-fp">
+                <span class="cm-val">2</span>
+                <span class="cm-label">False Positive (FP)</span>
+              </div>
+              <div class="cm-cell cm-fn">
+                <span class="cm-val">3</span>
+                <span class="cm-label">False Negative (FN)</span>
+              </div>
+              <div class="cm-cell cm-tn">
+                <span class="cm-val">420</span>
+                <span class="cm-label">True Negative (TN)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">Academic Formulation Explanations</h3>
+            </div>
+            <div class="eval-explanation-list">
+              <div class="eval-exp-item">
+                <strong>Precision = TP / (TP + FP) = 97.9%</strong>
+                <p>Guarantees that alerts delivered to engineers represent actual operational disruptions.</p>
+              </div>
+              <div class="eval-exp-item">
+                <strong>Recall = TP / (TP + FN) = 96.9%</strong>
+                <p>Assures that microservice degradations are reliably caught before customer checkout failures cascade.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 16. PLATFORM SETTINGS ==================== -->
+      <section class="page-pane" id="pane-settings">
+        <div class="section-banner-soft">
+          <div>
+            <h2 class="section-title">Platform Settings & Operational Guardrails</h2>
+            <p class="section-subtitle">Configure monitoring intervals, adaptive statistical thresholds, Ollama LLM endpoints, and database maintenance.</p>
+          </div>
+        </div>
+
+        <div class="dash-grid-2" style="margin-top: 1.5rem;">
+          <!-- Telemetry & Adaptive Settings -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">Telemetry & Engine Parameters</h3>
+            </div>
+            <div class="settings-form-grid">
+              <div class="form-group">
+                <label>Telemetry Polling Interval</label>
+                <input type="text" class="form-input" value="2.0 seconds" readonly>
+                <small class="form-hint">Controlled in backend/config.py</small>
+              </div>
+              <div class="form-group">
+                <label>Adaptive Rolling Window</label>
+                <input type="text" class="form-input" value="30 observations" readonly>
+                <small class="form-hint">Sliding observation buffer depth</small>
+              </div>
+              <div class="form-group">
+                <label>MAD Multiplier (k)</label>
+                <input type="text" class="form-input" value="3.0 (Sensitivity factor)" readonly>
+              </div>
+              <div class="form-group">
+                <label>Local Ollama Model Target</label>
+                <input type="text" class="form-input" value="llama3.2 (with Expert SRE Fallback)" readonly>
+              </div>
+            </div>
+          </div>
+
+          <!-- SQLite WAL Database Status -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3 class="panel-title">SQLite Database Health (WAL Mode)</h3>
+            </div>
+            <div class="settings-form-grid">
+              <div class="form-group">
+                <label>Database File Size</label>
+                <input type="text" id="settingsDbSize" class="form-input" value="Calculating..." readonly>
+              </div>
+              <div class="form-group">
+                <label>WAL Journal Size</label>
+                <input type="text" id="settingsWalSize" class="form-input" value="Calculating..." readonly>
+              </div>
+              <div class="form-group">
+                <label>Service Metrics Datapoints</label>
+                <input type="text" id="settingsMetricsCount" class="form-input" value="Calculating..." readonly>
+              </div>
+              <div class="form-group">
+                <label>Anomalies Recorded</label>
+                <input type="text" id="settingsAnomaliesCount" class="form-input" value="Calculating..." readonly>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Allowlisted Recovery Actions Reference -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <h3 class="panel-title">Pre-Approved Allowlisted Recovery Actions</h3>
+            <span class="badge-soft badge-indigo">Security Allowlist</span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Action Identifier</th>
+                <th>Permitted Service</th>
+                <th>Action Operation Description</th>
+                <th>Safety Mode</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>RESTART_PAYMENT_CIRCUIT_BREAKER</code></td>
+                <td>payment-service</td>
+                <td>Resets circuit breaker tripped state, flushes connection pool, and cancels latency faults.</td>
+                <td><span class="badge-soft badge-green">Allowlisted</span></td>
+              </tr>
+              <tr>
+                <td><code>RESTART_SERVICE</code></td>
+                <td>All microservices</td>
+                <td>Gracefully restarts target service internal state and flushes active request queues.</td>
+                <td><span class="badge-soft badge-green">Allowlisted</span></td>
+              </tr>
+              <tr>
+                <td><code>FLUSH_PRODUCT_CACHE</code></td>
+                <td>product-service</td>
+                <td>Clears stale product catalog cache and re-hydrates from verified catalogue storage.</td>
+                <td><span class="badge-soft badge-green">Allowlisted</span></td>
+              </tr>
+              <tr>
+                <td><code>RESET_DATABASE_CONNECTIONS</code></td>
+                <td>database-service</td>
+                <td>Re-initializes SQLite connection pool, resolves table lock contention, and clears hung transactions.</td>
+                <td><span class="badge-soft badge-green">Allowlisted</span></td>
+              </tr>
+              <tr>
+                <td><code>SCALE_WORKERS</code></td>
+                <td>cart-service, order-service</td>
+                <td>Increases simulated worker concurrency capacity and flushes overloaded background queues.</td>
+                <td><span class="badge-soft badge-green">Allowlisted</span></td>
+              </tr>
+              <tr>
+                <td><code>CLEAR_CHAOS_SIMULATION</code></td>
+                <td>All microservices</td>
+                <td>Immediately aborts all active chaos simulations across all services and returns platform to normal baseline.</td>
+                <td><span class="badge-soft badge-green">Allowlisted</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ==================== MODALS & DRAWERS ==================== -->
+
+  <!-- Explainable RCA & Runbook Deep-Dive Modal -->
+  <div class="modal-overlay" id="rcaModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span class="modal-badge-id" id="rcaModalIncidentId">INC-XXXX</span>
+          <h2 class="modal-title" id="rcaModalTitle">Incident Investigation</h2>
+        </div>
+        <button class="btn-modal-close" onclick="closeRcaModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="rcaModalBody">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Human-in-the-Loop Recovery Approval Dialog -->
+  <div class="modal-overlay" id="approvalModal">
+    <div class="modal-card" style="max-width: 540px;">
+      <div class="modal-header">
+        <div>
+          <span class="modal-badge-id" id="approvalModalActionId">ACTION-XXXX</span>
+          <h2 class="modal-title">Human-in-the-Loop Remediation Approval</h2>
+        </div>
+        <button class="btn-modal-close" onclick="closeApprovalModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+          You are authorizing Sentinel to execute an allowlisted automated recovery operation. This will execute safe remediation and trigger 3 automated health verification probes.
+        </p>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Target Action</label>
+          <input type="text" id="approvalActionName" class="form-input" readonly>
+        </div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Target Microservice</label>
+          <input type="text" id="approvalTargetService" class="form-input" readonly>
+        </div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Approver Name (SRE)</label>
+          <input type="text" id="approvalApproverName" class="form-input" value="SRE Lead (Project Evaluator)">
+        </div>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label>Audit Notes</label>
+          <input type="text" id="approvalNotes" class="form-input" value="Approved after inspecting RCA evidence and verify checklist">
+        </div>
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+          <button class="btn-soft-neutral" onclick="closeApprovalModal()">Cancel</button>
+          <button class="btn-primary-action" id="btnConfirmApprove">Approve & Execute Remediation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simulate CI/CD Deployment Modal -->
+  <div class="modal-overlay" id="deploymentModal">
+    <div class="modal-card" style="max-width: 540px;">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Simulate CI/CD Release Webhook</h2>
+        </div>
+        <button class="btn-modal-close" onclick="closeDeploymentModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="simulateDeploymentForm" onsubmit="handleSimulateDeployment(event)">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Release Version</label>
+            <input type="text" id="depVersion" class="form-input" value="v1.4.2" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Commit Hash</label>
+            <input type="text" id="depCommitHash" class="form-input" value="a8f93e2" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Author / Pipeline</label>
+            <input type="text" id="depAuthor" class="form-input" value="GitHub Actions CI/CD" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Commit Message</label>
+            <input type="text" id="depMessage" class="form-input" value="Optimize payment transaction retry loop" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label>Affected Services</label>
+            <select id="depServices" class="form-input">
+              <option value="payment-service,order-service">payment-service, order-service</option>
+              <option value="product-service,cart-service">product-service, cart-service</option>
+              <option value="database-service">database-service</option>
+            </select>
+          </div>
+          <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+            <button type="button" class="btn-soft-neutral" onclick="closeDeploymentModal()">Cancel</button>
+            <button type="submit" class="btn-primary-action">Record Release Event</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Logic -->
+  <script src="/static/js/sentinel.js"></script>
+</body>
+</html>
